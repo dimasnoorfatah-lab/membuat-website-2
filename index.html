@@ -328,21 +328,21 @@
         <div class="form-row">
           <div class="form-group">
             <label>Nama Lengkap</label>
-            <input type="text" placeholder="Nama Anda">
+            <input type="text" id="cust-name" placeholder="Nama Anda">
           </div>
           <div class="form-group">
             <label>No. WhatsApp</label>
-            <input type="tel" placeholder="08xx-xxxx-xxxx">
+            <input type="tel" id="cust-phone" placeholder="08xx-xxxx-xxxx">
           </div>
         </div>
         <div class="form-group">
           <label>Alamat Pengiriman</label>
-          <input type="text" placeholder="Jalan, RT/RW, Kelurahan...">
+          <input type="text" id="cust-address" placeholder="Jalan, RT/RW, Kelurahan...">
         </div>
         <div class="form-row">
           <div class="form-group">
             <label>Jenis Pesanan</label>
-            <select>
+            <select id="cust-ordertype">
               <option>-- Pilih --</option>
               <option>Sembako (Ambil di Toko)</option>
               <option>Sembako (Antar ke Rumah)</option>
@@ -353,12 +353,12 @@
           </div>
           <div class="form-group">
             <label>Jumlah</label>
-            <input type="number" min="1" placeholder="1">
+            <input type="number" id="cust-qty" min="1" placeholder="1">
           </div>
         </div>
         <div class="form-group">
           <label>Catatan Tambahan</label>
-          <textarea placeholder="Produk spesifik, jam pengiriman, atau permintaan khusus..."></textarea>
+          <textarea id="cust-notes" placeholder="Produk spesifik, jam pengiriman, atau permintaan khusus..."></textarea>
         </div>
         <button class="btn-submit" onclick="submitOrder()">📲 Kirim via WhatsApp</button>
       </div>

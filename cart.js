@@ -14,10 +14,10 @@ function initCart() {
 function addToCart(productName, productPrice) {
   // Parse harga dari format "Rp X.XXX"
   const price = parseInt(productPrice.replace(/[^\d]/g, ''));
-  
+
   // Cek apakah produk sudah ada di keranjang
   const existingItem = cart.find(item => item.name === productName);
-  
+
   if (existingItem) {
     existingItem.quantity++;
   } else {
@@ -28,10 +28,10 @@ function addToCart(productName, productPrice) {
       quantity: 1
     });
   }
-  
+
   saveCart();
   updateCartDisplay();
-  showNotification(`${productName} ditambahkan ke keranjang!`, 'success');
+  showNotification(productName + ' ditambahkan ke keranjang!', 'success');
 }
 
 // Update keseluruhan tampilan keranjang
@@ -50,12 +50,12 @@ function updateCartCount() {
 // Update tampilan item di keranjang
 function updateCartItems() {
   const cartItemsContainer = document.getElementById('cart-items');
-  
+
   if (cart.length === 0) {
     cartItemsContainer.innerHTML = '<p class="cart-empty">Keranjang kosong</p>';
     return;
   }
-  
+
   cartItemsContainer.innerHTML = cart.map((item, index) => `
     <div class="cart-item">
       <div class="cart-item-info">
@@ -77,10 +77,10 @@ function updateCartSummary() {
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const tax = Math.round(subtotal * 0.02);
   const total = subtotal + tax;
-  
-  document.getElementById('subtotal').textContent = `Rp ${formatCurrency(subtotal)}`;
-  document.getElementById('tax').textContent = `Rp ${formatCurrency(tax)}`;
-  document.getElementById('total').textContent = `Rp ${formatCurrency(total)}`;
+
+  document.getElementById('subtotal').textContent = 'Rp ' + formatCurrency(subtotal);
+  document.getElementById('tax').textContent = 'Rp ' + formatCurrency(tax);
+  document.getElementById('total').textContent = 'Rp ' + formatCurrency(total);
 }
 
 // Format currency (tanpa Rp, hanya angka)
@@ -113,14 +113,14 @@ function removeFromCart(index) {
   cart.splice(index, 1);
   saveCart();
   updateCartDisplay();
-  showNotification(`${removedItem} dihapus dari keranjang`, 'info');
+  showNotification(removedItem + ' dihapus dari keranjang', 'info');
 }
 
 // Toggle keranjang sidebar
 function toggleCart() {
   const sidebar = document.getElementById('cart-sidebar');
   const overlay = document.getElementById('cart-overlay');
-  
+
   sidebar.classList.toggle('active');
   overlay.classList.toggle('active');
 }
@@ -131,40 +131,62 @@ function checkout() {
     alert('Keranjang Anda kosong!');
     return;
   }
-  
+
+  // Ambil data customer dari form
+  const custName = document.getElementById('cust-name')?.value || '-';
+  const custPhone = document.getElementById('cust-phone')?.value || '-';
+  const custAddress = document.getElementById('cust-address')?.value || '-';
+  const custOrderType = document.getElementById('cust-ordertype')?.value || '-';
+  const custQty = document.getElementById('cust-qty')?.value || '-';
+  const custNotes = document.getElementById('cust-notes')?.value || '-';
+
   // Buat ringkasan pesanan
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const tax = Math.round(subtotal * 0.1);
   const total = subtotal + tax;
-  
-  let orderSummary = '*🛒 RINGKASAN PESANAN*\n';
-  orderSummary += '═════════════════════════\n\n';
-  
+
+  let orderSummary = '*🛒 RINGKASAN PESANAN*' + '\n';
+  orderSummary += '═════════════════════════' + '\n\n';
+
+  // Data customer
+  orderSummary += '👤 *DATA PELANGGAN*' + '\n';
+  orderSummary += '────────────────────────' + '\n';
+  orderSummary += 'Nama Lengkap     : ' + custName + '\n';
+  orderSummary += 'No. WhatsApp   : ' + custPhone + '\n';
+  orderSummary += 'Alamat Pengiriman: ' + custAddress + '\n';
+  orderSummary += 'Jenis Pesanan  : ' + custOrderType + '\n';
+  orderSummary += 'Jumlah        : ' + custQty + '\n';
+  orderSummary += 'Catatan       : ' + custNotes + '\n\n';
+  orderSummary += '═════════════════════════' + '\n\n';
+
+  orderSummary += '📦 *DAFTAR PESANAN*' + '\n';
+  orderSummary += '────────────────────────' + '\n';
+
   cart.forEach(item => {
     const itemTotal = item.price * item.quantity;
-    orderSummary += `✓ ${item.name}\n`;
-    orderSummary += `  Rp ${formatCurrency(item.price)} x ${item.quantity} = Rp ${formatCurrency(itemTotal)}\n\n`;
+    orderSummary += '✓ ' + item.name + '\n';
+    orderSummary += '  Rp ' + formatCurrency(item.price) + ' x ' + item.quantity + ' = Rp ' + formatCurrency(itemTotal) + '\n';
   });
-  
-  orderSummary += '═════════════════════════\n';
-  orderSummary += `Subtotal  : Rp ${formatCurrency(subtotal)}\n`;
-  orderSummary += `Pajak (10%): Rp ${formatCurrency(tax)}\n`;
-  orderSummary += `*TOTAL    : Rp ${formatCurrency(total)}*\n\n`;
-  orderSummary += '═════════════════════════\n';
-  orderSummary += '📍 *Metode Pembayaran:*\n';
-  orderSummary += '• Tunai (Ambil di toko)\n';
-  orderSummary += '• QRIS\n';
-  orderSummary += '• Transfer Bank\n';
-  orderSummary += '• Cicilan (khusus belanja >= Rp 500.000)\n\n';
-  orderSummary += '📦 *Pengiriman:*\n';
-  orderSummary += '• Ambil di toko (gratis)\n';
+
+  orderSummary += '\n═════════════════════════' + '\n';
+  orderSummary += 'Subtotal    : Rp ' + formatCurrency(subtotal) + '\n';
+  orderSummary += 'Pajak (10%): Rp ' + formatCurrency(tax) + '\n';
+  orderSummary += '*TOTAL     : Rp ' + formatCurrency(total) + '*\n\n';
+  orderSummary += '═════════════════════════' + '\n';
+  orderSummary += '📍 *Metode Pembayaran*:' + '\n';
+  orderSummary += '• Tunai (Ambil di toko)' + '\n';
+  orderSummary += '• QRIS' + '\n';
+  orderSummary += '• Transfer Bank' + '\n';
+  orderSummary += '• Cicilan (khusus belanja >= Rp 500.000)' + '\n\n';
+  orderSummary += '📦 *Pengiriman*:' + '\n';
+  orderSummary += '• Ambil di toko (gratis)' + '\n';
   orderSummary += '• Antar ke rumah (+Rp 3.000/km)';
-  
+
   // Kirim ke WhatsApp
   const phone = '6282325565813';
   const text = encodeURIComponent(orderSummary);
-  window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
-  
+  window.open('https://wa.me/' + phone + '?text=' + text, '_blank');
+
   // Clear cart setelah checkout
   cart = [];
   saveCart();
@@ -181,14 +203,14 @@ function saveCart() {
 // Tampilkan notifikasi
 function showNotification(message, type = 'info') {
   const notification = document.createElement('div');
-  notification.className = `notification notification-${type}`;
+  notification.className = 'notification notification-' + type;
   notification.textContent = message;
-  
+
   document.body.appendChild(notification);
-  
+
   // Animasi tampil
   setTimeout(() => notification.classList.add('show'), 10);
-  
+
   // Hilang otomatis setelah 3 detik
   setTimeout(() => {
     notification.classList.remove('show');
