@@ -47,17 +47,17 @@ function updateCartCount() {
   document.getElementById('cart-count').textContent = totalItems;
 }
 
-// Update tampilan item di keranjang
+// Update tampilan item di keranjang dengan animasi smooth
 function updateCartItems() {
   const cartItemsContainer = document.getElementById('cart-items');
 
   if (cart.length === 0) {
-    cartItemsContainer.innerHTML = '<p class="cart-empty">Keranjang kosong</p>';
+    cartItemsContainer.innerHTML = '<div class="cart-empty"><span class="cart-empty-icon">🛒</span><p>Keranjang belanja kosong</p></div>';
     return;
   }
 
   cartItemsContainer.innerHTML = cart.map((item, index) => `
-    <div class="cart-item">
+    <div class="cart-item" style="animation: slideInItem 0.3s ease-out ${index * 0.08}s both;">
       <div class="cart-item-info">
         <h4>${item.name}</h4>
         <p>Rp ${formatCurrency(item.price)}</p>
@@ -67,10 +67,71 @@ function updateCartItems() {
         <span class="qty-value">${item.quantity}</span>
         <button class="qty-btn" onclick="increaseQty(${index})">+</button>
       </div>
-      <button class="remove-btn" onclick="removeFromCart(${index})">❌</button>
+      <button class="remove-btn" onclick="removeFromCart(${index})">✕</button>
     </div>
   `).join('');
 }
+
+// Inject animasi CSS untuk cart items
+const cartAnimStyle = document.createElement('style');
+cartAnimStyle.textContent = `
+  @keyframes slideInItem {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .cart-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    gap: 12px;
+    padding: 40px 20px;
+  }
+  .cart-empty-icon {
+    font-size: 56px;
+    opacity: 0.4;
+  }
+  .cart-empty p {
+    font-size: 16px;
+    color: #888;
+    font-weight: 500;
+  }
+  .cart-item {
+    animation: slideInItem 0.3s ease-out both;
+    background: #fafafa;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 12px;
+    transition: all 0.2s ease;
+  }
+  .cart-item:hover {
+    background: #f0f0f0;
+    transform: translateX(-2px);
+  }
+  .qty-value {
+    font-weight: 600;
+    min-width: 28px;
+    text-align: center;
+    display: inline-block;
+  }
+  .remove-btn {
+    background: #ffebee;
+    color: #e53935;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+  }
+  .remove-btn:hover {
+    background: #e53935;
+    color: white;
+  }
+`;
+document.head.appendChild(cartAnimStyle);
 
 // Update ringkasan harga
 function updateCartSummary() {
@@ -116,13 +177,25 @@ function removeFromCart(index) {
   showNotification(removedItem + ' dihapus dari keranjang', 'info');
 }
 
-// Toggle keranjang sidebar
+// Toggle keranjang sidebar dengan animasi smooth
 function toggleCart() {
   const sidebar = document.getElementById('cart-sidebar');
   const overlay = document.getElementById('cart-overlay');
 
-  sidebar.classList.toggle('active');
-  overlay.classList.toggle('active');
+  // Animasi smooth dengan delay kecil untuk efek lebih halus
+  if (sidebar.classList.contains('active')) {
+    // Tutup - langsung tutup tanpa delay
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+  } else {
+    // Buka - tambahkan class animate terlebih dahulu
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+    // Focus pada container keranjang untuk accessibility
+    setTimeout(() => {
+      document.getElementById('cart-items')?.focus();
+    }, 300);
+  }
 }
 
 // Checkout
