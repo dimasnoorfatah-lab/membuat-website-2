@@ -106,8 +106,8 @@ border: 1px solid rgba(26,111,168,0.3);
 .stat-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
 
 /* MARQUEE */
-.marquee-wrap { background: var(--green); padding: 12px 0; overflow: hidden; }
-.marquee-track { display: flex; gap: 0; white-space: nowrap; animation: marquee 22s linear infinite; }
+.marquee-wrap { background: var(--green); padding: 12px 0; overflow: hidden; } .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
+.marquee-track { display: flex; gap: 0; white-space: nowrap; animation: marquee 15s linear infinite; }
 .marquee-item { font-size: 13px; color: white; font-weight: 500; padding: 0 28px; opacity: 0.9; }
 .marquee-dot { color: var(--green-light); }
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -300,23 +300,18 @@ section { padding: 40px 3vw; }
 .nav-logo { font-size: 18px; }
 }
 
-/* ANIMATIONS */
-.fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.55s, transform 0.55s; }
-.fade-up.visible { opacity: 1; transform: translateY(0); }
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    scroll-behavior: smooth;
-}
 
 /* Animasi Global */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -974,9 +969,13 @@ header {
     height: 100vh;
     background: white;
     box-shadow: -8px 0 30px rgba(0,0,0,0.15);
-    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s ease;
     z-index: 1001;
     overflow-y: auto;
+    will-change: transform;
+}
+.cart-sidebar.active {
+    transform: scale(1);
 }
 
 @keyframes slideInRight {
